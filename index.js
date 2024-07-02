@@ -28,8 +28,38 @@ app.get('/', (request, response) => {
   response.send('<h1>Hello World!</h1>')
 })
 
+app.get('/info', (request, response) => { 
+  response.send(`<p>Phonebook has info for ${persons.length} people</p>
+    <p> ${new Date()}</p>`)
+    
+})
+
 app.get('/api/persons', (request, response) => {
   response.json(persons)
+})
+
+app.get('/api/persons/:id', (request, response) => {
+  response.json(persons[request.params.id-1])
+})
+
+app.post('/api/persons', (request, response) => {
+  const body = request.body
+  if (!body.name || !body.number) {
+    return response.status(400).json({ 
+      error: 'name or number missing' 
+    })
+  }
+  const person = {
+    id: (persons.length + 1).toString(),
+    name: body.name,
+    number: body.number
+  }
+  persons = persons.concat(person)
+  response.json(person)
+})
+app.delete('/api/persons/:id', (request, response) => { 
+  persons = persons.filter(person => person.id !== request.params.id)
+  response.status(204).end()
 })
 
 const PORT = 3001
