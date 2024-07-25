@@ -47,16 +47,16 @@ const App = () => {
       const person = persons.find(person => person.name === newName)
       const changedPerson = {...person, number: newNumber}
       phonebook
-        .update(person.id, changedPerson)
+        .update(person._id, changedPerson)
         .then(response => {
-          setPersons(persons.map(p => p.id !== person.id ? p : response))
+          setPersons(persons.map(p => p._id !== person._id ? p : response))
           setMessage(`Updated ${newName}`)
           setNewName('')
           setNewNumber('')
         }) 
         .catch(error => {
           setError(true)
-          setMessage(`Information of ${person.name} has already been removed from server`)
+          setMessage(error.message)
          })
 
       return
@@ -72,19 +72,19 @@ const App = () => {
   }
 
   const deletePerson = (id) => {
-    const person = persons.find(person => person.id === id)
+    const person = persons.find(person => person._id === id)
     const confirm = window.confirm(`Delete ${person.name}?`)
     if(confirm) {
       phonebook
         .remove(id)
         .then((deletedData) => {
           console.log('Deleted data:', deletedData);
-          setPersons(persons.filter(person => person.id !== id));
+          setPersons(persons.filter(person => person._id !== id));
           setMessage(`Deleted ${person.name}`)
         })
         .catch(error => {
          setError(true)
-         setMessage(`Information of ${person.name} has already been removed from server`)
+         setMessage(error.message)
         });
     }
   }
